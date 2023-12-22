@@ -36,7 +36,7 @@ fish_image = pygame.transform.flip(fish_image, True, False)
 
 # Main Loop
 while True:
-    # Set the frame rate to 30 frames per second
+    # Set the frame rate to 60 frames per second
     time = clock.tick(60)
 
     ### MANAGE IN-GAME EVENTS HERE
