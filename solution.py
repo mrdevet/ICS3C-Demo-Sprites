@@ -29,67 +29,80 @@ all_sprites = pygame.sprite.Group()
 # Load the images
 background_image = pygame.image.load("underwater.png")
 fish_image = pygame.image.load("fish.png")
-fish_image = pygame.transform.flip(fish_image, True, False)
+fish_image_flipped = pygame.transform.flip(fish_image, True, False)
+rock_image = pygame.image.load("rock.png")
 
-# Group to store all of the fish in
+# Create a group for the fish sprites
 fishies = pygame.sprite.Group()
 
-# Fish that moves across the screen
-fish1 = Sprite(fish_image)
-fish1.position = (100,100)
-fish1.speed = 1
-fish1.add(all_sprites, fishies)
+# Create a fish that moves to the right
+fish = Sprite(fish_image_flipped)
+fish.position = (100, 200)
+fish.speed = 1
+fish.add(all_sprites, fishies)
 
-# Fish that moves from top to bottom
+# Create a fish that moves to the left
 fish2 = Sprite(fish_image)
-fish2.position = (400,50)
-fish2.direction = 270
-fish2.speed = 2
+fish2.position = (300, 100)
+fish2.direction = 45
+fish2.rotates = False
+fish2.speed = 3
 fish2.add(all_sprites, fishies)
 
-# Fish that moves diagonally
+# Create a fish that moves up
 fish3 = Sprite(fish_image)
-fish3.position = (50,200)
-fish3.direction = 30
-fish3.speed = 1.5
+fish3.position = (200, 400)
+fish3.direction = 90
+fish3.rotates = False
+fish3.speed = 0.5
 fish3.add(all_sprites, fishies)
 
-# Fish that spins in a circle
-fish4 = Sprite(fish_image)
-fish4.position = (300,150)
-fish4.speed = 4
+# Create a fish that moves in circles
+fish4 = Sprite(fish_image_flipped)
+fish4.position = (700, 100)
+fish4.rotates = False
+fish4.speed = 2
 fish4.add(all_sprites, fishies)
 
+# Create a rock sprite
+rock = Sprite(rock_image)
+rock.center = (WIDTH / 2, 350)
+rock.add(all_sprites)
 
 # Main Loop
 while True:
-    # Set the frame rate to 30 frames per second
+    # Set the frame rate to 60 frames per second
     time = clock.tick(60)
 
     ### MANAGE IN-GAME EVENTS HERE
-
-    # Turn fish4
-    fish4.turn_left(5)
-
-    # Check if a fish is off the screen wrap it to the other side
+    
+    # Make the fourth fish turn as it moves
+    fish4.turn_right(3)
+    
+    
     for fish in fishies:
-        if fish.right < 0:
-            fish.left = WIDTH
+        # Make the fish wrap around the ends
         if fish.left > WIDTH:
             fish.right = 0
-        if fish.bottom < 0:
-            fish.top = HEIGHT
-        if fish.top > HEIGHT:
-            fish.bottom = 0
-
+        if fish.right < 0:
+            fish.left = WIDTH
+            
+        # Makes it so fish bounce off top and bottom
+        if fish.top < 0 or fish.bottom > HEIGHT:
+            fish.direction = 360 - fish.direction
     
-    # Set the background color
+        # If a fish touches the rock, they die
+        if pygame.sprite.collide_mask(fish, rock):
+            fish.kill()
+    
+    
+    # Redraw the background
     screen.blit(background_image, (0, 0))
-
-    # Update the sprites' locations
+    
+    # Update all of the sprites for animation
     all_sprites.update()
-
-    # Redraw the sprites
+    
+    # Redraw the all of the sprites
     all_sprites.draw(screen)
 
     # Uncomment the next line to show a grid
